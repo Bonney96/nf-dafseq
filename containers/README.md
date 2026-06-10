@@ -59,6 +59,8 @@ Keep the `:<tag>` in the module `container` directives in sync with what you pus
 The `dafqc` image mirrors the DAF-QC-SMK repo (`workflow/envs/*.yaml`): `minimap2==2.30`,
 `pysam==0.23.3`, `matplotlib==3.10.3`, and keeps DAF-QC-SMK's internal `pandas==1.4` pin.
 The steps-1/3/4 image (`ghcr.io/dhslab/docker-dafseq`) pins minimap2 v2.30 and inherits
-samtools/pysam/pandas/scikit-learn/matplotlib from `dhspence/docker-baseimage` (python 3.8).
-A container run should re-confirm the regression numbers, since those base versions differ from
-the labtools stack the `washu` run was validated against.
+samtools 1.13/pysam 0.19.1/pandas 1.5.1/numpy 1.23.4/scikit-learn 1.1.3/matplotlib from
+`dhspence/docker-baseimage` (python 3.8). Running steps 3 and 4 inside this image reproduced the
+regression numbers exactly (631/6, 213/331, 301/151, HOXA across all 6 amplicons) despite those
+versions differing from the labtools stack the `washu` run used — so the dedup/phasing science is
+stable across the two stacks.

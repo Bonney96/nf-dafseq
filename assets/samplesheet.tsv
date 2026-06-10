@@ -1,5 +1,5 @@
 sample	fastq	regions	phase_type	phase_value
-HOXA_POOL	/storage2/fs1/dspencer/Active/spencerlab/data/work_orders/20260518_L86QY2_dafseq/fastq/L86QY2_1_DAF_SEQ_HOXA_POOL.fastq	chr7:27092000-27200000
+HOXA_POOL	/storage2/fs1/dspencer/Active/spencerlab/data/work_orders/20260518_L86QY2_dafseq/fastq/L86QY2_1_DAF_SEQ_HOXA_POOL.fastq	chr7:27148144-27154036,chr7:27153337-27157360,chr7:27156616-27161401,chr7:27160532-27166119,chr7:27163350-27168933,chr7:27172849-27177311	none	none
 MOLM13_GATA2_F6MUTANT	/storage2/fs1/dspencer/Active/spencerlab/data/plasmidsaurus/20260327_TLMKJH_dafseq/fastq/TLMKJH_1_DAF_SEQ_MOLM13_GATA2_F6MUTANT.fastq	chr3:128486668-128495149	del	chr3:128493047-128493075
 D8D4V5_1_DAFSEQ1102_TXTMOLM13	/storage2/fs1/dspencer/Active/spencerlab/data/plasmidsaurus/20260130_D8D4V5_dafseq/data/D8D4V5_1_DAFSEQ1102_TXTMOLM13.fastq	chr3:128493516-128499510
 D8D4V5_2_DAFSEQ287XL_TXTMOLM13	/storage2/fs1/dspencer/Active/spencerlab/data/plasmidsaurus/20260130_D8D4V5_dafseq/data/D8D4V5_2_DAFSEQ287XL_TXTMOLM13.fastq	chr3:128486668-128495149	snp	chr3:128491529,C,T

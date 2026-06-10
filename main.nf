@@ -17,8 +17,10 @@ include { PHASE_READS     } from './modules/local/phase_reads'
 
 workflow {
 
-    // Reference (skip existence check during -stub so it can run with no data)
-    ch_ref = file(params.ref, checkIfExists: !workflow.stubRun)
+    // Reference is required for a real run (skip the check during -stub so wiring runs with no data)
+    if( !workflow.stubRun && !params.ref )
+        error "Reference FASTA is required: pass --ref /path/to/genome.fa (or use -profile washu for the cluster default)."
+    ch_ref = file(params.ref ?: "${projectDir}/assets/stub_ref.fa", checkIfExists: !workflow.stubRun)
 
     // Parse the TSV samplesheet: sample, fastq, regions, phase_type, phase_value
     ch_samples = Channel

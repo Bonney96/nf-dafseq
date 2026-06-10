@@ -6,13 +6,13 @@
 process DAFQC_SMK {
     tag { sample }
     label 'process_high'
-    // Serialize: the first job builds the shared snakemake conda envs; concurrent
-    // builds into one SNAKEMAKE_CONDA_PREFIX can race/corrupt. Safe for a few samples.
-    maxForks 1
+    // The dafqc image has the snakemake conda envs prebuilt, so concurrent runs no longer
+    // race a shared SNAKEMAKE_CONDA_PREFIX. The washu profile (module-based, shared prefix)
+    // re-imposes `maxForks 1` for that path.
     publishDir "${params.outdir}/${sample}", mode: 'copy',
         saveAs: { fn -> fn.startsWith("results/${sample}/") ? fn.substring("results/${sample}/".length()) : fn }
 
-    beforeScript 'module load pixi'
+    container 'ghcr.io/bonney96/nf-dafseq-dafqc:0.1.0'
 
     input:
     tuple val(sample), path(bam), path(bai), val(regions), val(phase_type), val(phase_value)

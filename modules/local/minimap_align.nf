@@ -6,7 +6,7 @@ process MINIMAP_ALIGN {
     label 'process_medium'
     publishDir "${params.outdir}/${sample}/align", mode: 'copy'
 
-    beforeScript 'module load labtools'
+    container 'ghcr.io/bonney96/nf-dafseq-tools:0.1.0'
 
     input:
     tuple val(sample), path(fastq), val(regions), val(phase_type), val(phase_value)

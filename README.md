@@ -15,18 +15,16 @@ per-run inputs now live in a single samplesheet.
 
 ## Requirements
 
-Run on the lab cluster. The pipeline uses environment modules + pixi (no per-process
-containers in this version):
+You need Nextflow (`>=24.04`, tested with 25.10.4) and **one** way to supply tools:
 
-- `module load nextflow`  (tested with 25.10.4)
-- `module load labtools`  — provides minimap2, samtools, bedGraphToBigWig, and a Python with
-  pysam/numpy/pandas/scipy/scikit-learn/seaborn (used by steps 1, 3, 4). Loaded automatically
-  per process via `beforeScript`.
-- `module load pixi`      — used by step 2 to run the wrapped DAF-QC-SMK Snakemake. Loaded
-  automatically per process.
-
-Step 2 calls the **DAF-QC-SMK** repo set by `params.dafqc_repo`. On first real run, Snakemake
-builds its conda environments into `params.conda_prefix` (slow once, then cached).
+- **Anywhere** — a container runtime: Docker (laptops/cloud) or Apptainer/Singularity (HPC).
+  Tools ship as two images (`containers/`): `nf-dafseq-tools` (steps 1/3/4) and `nf-dafseq-dafqc`
+  (the wrapped DAF-QC-SMK Snakemake, with its conda envs prebuilt). Images are pulled from
+  `ghcr.io/bonney96/`; rebuild from `containers/` if needed. Select with
+  `-profile docker|singularity|apptainer`.
+- **WashU RIS in-house** — `-profile washu` uses Lmod (`module load labtools`/`pixi`) + SLURM
+  instead of containers, and restores the on-cluster `--ref`/`--dafqc_repo` defaults. On first
+  run Snakemake builds its conda envs into `params.conda_prefix` (slow once, then cached).
 
 ## Samplesheet (`assets/samplesheet.tsv`)
 
@@ -45,17 +43,20 @@ TSV is used (not CSV) so SNP values containing commas don't clash with the delim
 ## Running
 
 ```bash
-module load nextflow
-
 # Dry wiring check — no tools or data needed:
 nextflow run . -stub -profile test
 
-# Real run on the cluster:
-nextflow run . -profile slurm --input assets/samplesheet.tsv --outdir results
+# Anywhere with a container runtime (--ref is required):
+nextflow run . -profile docker    --input sheet.tsv --ref genome.fa --outdir results
+nextflow run . -profile apptainer --input sheet.tsv --ref genome.fa --outdir results
+
+# WashU RIS in-house (Lmod + SLURM; --ref/--dafqc_repo default to cluster paths):
+nextflow run . -profile washu --input assets/samplesheet.tsv --outdir results
 ```
 
-Common overrides: `--ref`, `--dafqc_repo`, `--conda_prefix`, `--outdir`,
-`--decorated_samplesize`, `--del_overlap_frac`.
+`--ref` is required for every real (non-`washu`) run. Other common overrides: `--dafqc_repo`,
+`--conda_prefix`, `--outdir`, `--decorated_samplesize`, `--del_overlap_frac`. Profiles compose,
+e.g. `-profile docker,local`.
 
 ## Outputs
 
@@ -68,8 +69,8 @@ results/pipeline_info/      timeline, report, trace, DAG
 
 ## Notes / TODO
 
-- `params.dafqc_repo` currently defaults to a personal path; clone DAF-QC-SMK to a shared
-  location and update the default.
-- This version wraps the DAF-QC-SMK Snakemake as one process. The layout keeps step 2 isolated
-  so its rules could be ported to native Nextflow processes later.
-- A container (`apptainer`) profile can be added later for cross-cluster reproducibility.
+- Step 2 wraps the DAF-QC-SMK Snakemake as one process (pinned + baked into the `nf-dafseq-dafqc`
+  image). The layout keeps it isolated so its rules could be ported to native Nextflow processes
+  later (Tier 3 in `docs/PORTABILITY_HANDOFF.md`).
+- nf-core conventions (schema validation, lint/CI, institutional configs) are the next tier and
+  not yet applied.

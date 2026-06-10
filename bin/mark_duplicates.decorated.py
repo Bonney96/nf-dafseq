@@ -138,7 +138,16 @@ def strand_metrics_table(
 
     reads_table = pd.DataFrame(read_collector)
 
+    # No reads passed the filters for this region (e.g. a pooled amplicon with no
+    # full-length spanning reads). Skip the region instead of raising KeyError.
+    if reads_table.empty or 'strand' not in reads_table.columns:
+        return pd.DataFrame()
+
     reads_table= reads_table[(reads_table['strand']=="CT") | (reads_table['strand']=="GA")].copy().reset_index()
+
+    # No top/bottom (CT/GA) reads in this region: nothing to cluster, skip it.
+    if reads_table.empty:
+        return pd.DataFrame()
     positions=[]
 
     for ii in range(reads_table.shape[0]):
@@ -187,13 +196,29 @@ def strand_metrics_table(
     clusters=pd.merge(clusters, leads, on='cluster', how='left')
     return clusters
 
-def make_dedup_bam(input_bam, output_bam, clusters):
-    for read in input_bam.fetch(chrom, start, end):
-        if read.query_name in clusters['read_name'].values:
-            lead=clusters[clusters.read_name==read.query_name]['lead'].values[0]
-            if read.query_name!=lead:
+def make_dedup_bam(input_bam, output_bam, regions, clusters):
+    # Reads that were clustered, and their cluster lead. Empty when no region
+    # produced clusters.
+    if clusters.empty or 'read_name' not in clusters.columns:
+        return
+    lead_lookup = dict(zip(clusters['read_name'], clusters['lead']))
+
+    # Fetch every region (not just the last one) and write each alignment once.
+    # The (name, flag, pos) key dedups records seen via overlapping amplicons.
+    written = set()
+    for region in regions:
+        chrom, start, end = parse_region(region)
+        for read in input_bam.fetch(chrom, start, end):
+            if read.query_name not in lead_lookup:
+                continue
+            key = (read.query_name, read.flag, read.reference_start)
+            if key in written:
+                continue
+            written.add(key)
+            lead = lead_lookup[read.query_name]
+            if read.query_name != lead:
                 read.set_tag("du", lead)
-            output_bam.write(read) 
+            output_bam.write(read)
 
 
 ## Main script execution
@@ -247,9 +272,9 @@ for region in regions:
     )
     clusters_list.append(clusters)
     
-clusters=pd.concat(clusters_list, ignore_index=True)   
+clusters=pd.concat(clusters_list, ignore_index=True) if clusters_list else pd.DataFrame()
 
-make_dedup_bam(input_bam, output_bam, clusters)
+make_dedup_bam(input_bam, output_bam, regions, clusters)
 
 clusters.to_csv(output_prefix+'.clusters.txt', sep="\t", index=False)
 

@@ -7,7 +7,7 @@ process PHASE_READS {
     label 'process_low'
     publishDir "${params.outdir}/${sample}/phasing", mode: 'copy'
 
-    container 'ghcr.io/bonney96/nf-dafseq-tools:0.1.0'
+    container 'dhspence/docker-dafseq:latest'
 
     input:
     tuple val(sample), path(mkdup_bam), path(mkdup_bai), val(phase_type), val(phase_value)

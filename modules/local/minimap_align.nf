@@ -6,7 +6,7 @@ process MINIMAP_ALIGN {
     label 'process_medium'
     publishDir "${params.outdir}/${sample}/align", mode: 'copy'
 
-    container 'dhspence/docker-dafseq:latest'
+    container 'ghcr.io/dhslab/docker-dafseq:latest'
 
     input:
     tuple val(sample), path(fastq), val(regions), val(phase_type), val(phase_value)

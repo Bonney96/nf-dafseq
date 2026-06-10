@@ -6,7 +6,7 @@ process MARK_DUPLICATES {
     label 'process_medium'
     publishDir "${params.outdir}/${sample}/dedup", mode: 'copy'
 
-    container 'dhspence/docker-dafseq:latest'
+    container 'ghcr.io/dhslab/docker-dafseq:latest'
 
     input:
     tuple val(sample), path(decorated_bam), path(decorated_bai),

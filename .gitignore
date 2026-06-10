@@ -7,5 +7,6 @@ results*/
 *.log
 *.pyc
 __pycache__/
+validation/
 CLAUDE.md
 docs/PORTABILITY_HANDOFF.md

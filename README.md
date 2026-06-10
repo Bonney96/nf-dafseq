@@ -18,7 +18,7 @@ per-run inputs now live in a single samplesheet.
 You need Nextflow (`>=24.04`, tested with 25.10.4) and **one** way to supply tools:
 
 - **Anywhere** — a container runtime: Docker (laptops/cloud) or Apptainer/Singularity (HPC).
-  Tools ship as two images: `dhspence/docker-dafseq` (steps 1/3/4; the lab image from
+  Tools ship as two images: `ghcr.io/dhslab/docker-dafseq` (steps 1/3/4; the lab image from
   [dhslab-docker-images](https://github.com/dhslab/dhslab-docker-images)) and
   `ghcr.io/bonney96/nf-dafseq-dafqc` (step 2 — the wrapped DAF-QC-SMK Snakemake, with its conda
   envs prebuilt; built from `containers/dafqc`). Select with

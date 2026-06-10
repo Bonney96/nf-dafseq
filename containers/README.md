@@ -5,7 +5,7 @@ images cover all four steps:
 
 | Image | Steps | Source |
 |-------|-------|--------|
-| `dhspence/docker-dafseq` | 1 (align), 3 (dedup), 4 (phasing) | lab image, maintained in [dhslab/dhslab-docker-images](https://github.com/dhslab/dhslab-docker-images) (`docker-dafseq/`) |
+| `ghcr.io/dhslab/docker-dafseq` | 1 (align), 3 (dedup), 4 (phasing) | lab image, maintained in [dhslab/dhslab-docker-images](https://github.com/dhslab/dhslab-docker-images) (`docker-dafseq/`) |
 | `ghcr.io/bonney96/nf-dafseq-dafqc` | 2 (DAF-QC-SMK wrap) | built here from `containers/dafqc` |
 
 The pipeline references these via `container` directives in `modules/local/*.nf`. A container
@@ -13,9 +13,10 @@ engine is only used when you select a profile that enables one (`-profile docker
 apptainer`); under `-profile washu` the directives are inert and the cluster `module load`s are
 used instead.
 
-The steps 1/3/4 image (`dhspence/docker-dafseq`) is built `FROM dhspence/docker-baseimage` and
-adds minimap2 v2.30 + scikit-learn/seaborn/matplotlib; it is built/published by the
-dhslab-docker-images repo, not here. Only the step-2 `dafqc` image is built from this repo.
+The steps 1/3/4 image (`ghcr.io/dhslab/docker-dafseq`) is built `FROM dhspence/docker-baseimage`
+(python 3.8, already has samtools/pysam/pandas/numpy/scipy/scikit-learn/matplotlib/bedGraphToBigWig)
+and adds minimap2 v2.30 + seaborn; it is built/published by the dhslab-docker-images CI, not here.
+Only the step-2 `dafqc` image is built from this repo.
 
 ## Build & push (dafqc only)
 
@@ -57,6 +58,7 @@ Keep the `:<tag>` in the module `container` directives in sync with what you pus
 
 The `dafqc` image mirrors the DAF-QC-SMK repo (`workflow/envs/*.yaml`): `minimap2==2.30`,
 `pysam==0.23.3`, `matplotlib==3.10.3`, and keeps DAF-QC-SMK's internal `pandas==1.4` pin.
-The steps-1/3/4 image (`dhspence/docker-dafseq`) pins minimap2 v2.30 and inherits samtools/
-pysam/pandas from `dhspence/docker-baseimage` (samtools 1.21, pandas 2.x) — the `washu`
-regression confirmed the science is unchanged at those versions.
+The steps-1/3/4 image (`ghcr.io/dhslab/docker-dafseq`) pins minimap2 v2.30 and inherits
+samtools/pysam/pandas/scikit-learn/matplotlib from `dhspence/docker-baseimage` (python 3.8).
+A container run should re-confirm the regression numbers, since those base versions differ from
+the labtools stack the `washu` run was validated against.

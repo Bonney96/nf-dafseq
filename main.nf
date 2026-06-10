@@ -28,8 +28,11 @@ workflow {
             def sample  = row.sample?.trim()
             def fastq   = row.fastq?.trim()
             def regions = row.regions?.trim()
-            def ptype   = (row.phase_type  ?: '').trim()
+            def ptype   = (row.phase_type  ?: '').trim().toLowerCase()
             def pval    = (row.phase_value ?: '').trim()
+            // treat common "no value" placeholders as no-phasing
+            if( ptype in ['none','na','n/a','.','-'] ) { ptype = ''; pval = '' }
+            if( pval  in ['none','na','n/a','.','-'] ) { pval = '' }
             if( !sample || !fastq || !regions )
                 error "Samplesheet row is missing required sample/fastq/regions: ${row}"
             if( ptype && !(ptype in ['snp','del']) )

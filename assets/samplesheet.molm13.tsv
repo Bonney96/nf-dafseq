@@ -1,0 +1,4 @@
+sample	fastq	regions	phase_type	phase_value
+MOLM13_GATA2_F6MUTANT	/storage2/fs1/dspencer/Active/spencerlab/data/plasmidsaurus/20260327_TLMKJH_dafseq/fastq/TLMKJH_1_DAF_SEQ_MOLM13_GATA2_F6MUTANT.fastq	chr3:128486668-128495149	del	chr3:128493047-128493075
+D8D4V5_1_DAFSEQ1102_TXTMOLM13	/storage2/fs1/dspencer/Active/spencerlab/data/plasmidsaurus/20260130_D8D4V5_dafseq/data/D8D4V5_1_DAFSEQ1102_TXTMOLM13.fastq	chr3:128493516-128499510	none	none
+D8D4V5_2_DAFSEQ287XL_TXTMOLM13	/storage2/fs1/dspencer/Active/spencerlab/data/plasmidsaurus/20260130_D8D4V5_dafseq/data/D8D4V5_2_DAFSEQ287XL_TXTMOLM13.fastq	chr3:128486668-128495149	snp	chr3:128491529,C,T

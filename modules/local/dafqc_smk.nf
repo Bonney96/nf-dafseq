@@ -6,6 +6,9 @@
 process DAFQC_SMK {
     tag { sample }
     label 'process_high'
+    // Serialize: the first job builds the shared snakemake conda envs; concurrent
+    // builds into one SNAKEMAKE_CONDA_PREFIX can race/corrupt. Safe for a few samples.
+    maxForks 1
     publishDir "${params.outdir}/${sample}", mode: 'copy',
         saveAs: { fn -> fn.startsWith("results/${sample}/") ? fn.substring("results/${sample}/".length()) : fn }
 
@@ -43,9 +46,9 @@ EOF
     mkdir -p "${params.conda_prefix}"
     export SNAKEMAKE_CONDA_PREFIX="${params.conda_prefix}"
 
+    # the pixi 'snakemake' task already supplies '-s <repo>/workflow/Snakefile'
     pixi run --manifest-path ${params.dafqc_repo}/pixi.toml \\
         snakemake \\
-        -s ${params.dafqc_repo}/workflow/Snakefile \\
         --configfile config.yaml \\
         --software-deployment-method conda \\
         --conda-prefix "${params.conda_prefix}" \\

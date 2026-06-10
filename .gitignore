@@ -1,0 +1,7 @@
+work/
+results/
+.nextflow/
+.nextflow.log*
+.snakemake-conda-envs/
+*.pyc
+__pycache__/
